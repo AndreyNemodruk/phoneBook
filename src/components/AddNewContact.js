@@ -161,16 +161,16 @@ class AddNewContact extends Component{
         let request = fetch('http://phonebook.hillel.it/api/phonebook',{
                 credentials: 'include',
                 method:'POST',
-                headers:{
-                    'Content-Type': "application/json",
-                },
-                body: JSON.stringify(data),
+                // headers:{
+                //     'Content-Type': "application/json",
+                // },
+                body: JSON.stringify({"name":"andru", "surname":"nemodruk"}),
             }
 
         );
         request.then((response)=>{
             response.json().then((result) =>{
-            console.log(result.message);
+            console.log(result.message, JSON.stringify(data));
             })
         }).catch((e)=>{
             console.log(e)
