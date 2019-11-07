@@ -1,60 +1,83 @@
 import React, {Component} from "react";
 import Grid from "@material-ui/core/Grid";
-
-import IconButton from "@material-ui/core/IconButton";
-import Toolbar from "@material-ui/core/Toolbar";
-
-import MenuIcon from '@material-ui/icons/Menu';
-import Typography from "@material-ui/core/Typography";
-import AppBar from "@material-ui/core/AppBar";
+import LeftBar from "./leftBar";
+import AddNewContact from "./AddNewContact";
+import AllContacts from "./AllContacts";
+import {Route} from "react-router-dom";
 
 
-const classes = {
-    AppBar:{
-        root:{
-            flexGrow: 1,
-        },
-        menuButton: {
-            marginRight:2,
-        },
-        title: {
-            flexGrow: 1,
-        },
-    },
-    fab: {
-        margin: 1,
-    },
-    text:{
-        color: 'primary',
-    },
-
-}
+// const classes = {
+//     AppBar:{
+//         root:{
+//             flexGrow: 1,
+//         },
+//         menuButton: {
+//             marginRight:2,
+//         },
+//         title: {
+//             flexGrow: 1,
+//         },
+//     },
+//     fab: {
+//         margin: 1,
+//     },
+//     text:{
+//         color: 'primary',
+//     },
+//
+// }
 
 class PhoneBook extends Component{
     constructor(){
         super();
         this.state={
-
+            contacts:[],
+            options: [
+                'None',
+                'Atria',
+                'Callisto',
+                'Dione',
+            ],
+            idChangeCard: "",
         }
     }
 
+    // componentDidMount() {
+    //     let ContactDataPromise=fetch('http://phonebook.hillel.it/api/phonebook?',{
+    //         credentials: 'include'
+    //     });
+    //     ContactDataPromise.then(response=>{
+    //         response.json().then(response=>{
+    //             this.setState({
+    //                 contacts:response,
+    //             }, ()=> console.log(this.state))
+    //         })
+    //     })
+    // }
+
+    addNewCard = (e)=>{
+        e.preventDefault()
+        this.props.history.push("/addCard");
+    };
+
+    ifChange = (id) =>{
+        this.props.history.push("/changeCard");
+        this.setState({
+            idChangeCard:id,
+        },()=>console.log('phone',this.state))
+    }
+
+
+
     render() {
         return(
-            <Grid item xs={9} component={'div'} style={{overflow: 'hidden'}}>
-                <div className={classes.root}>
-                    <AppBar position="static">
-                        <Toolbar>
-                            <Grid container component={'div'} direction='row' justify='space-between' alignItems='center' >
-                                <Typography variant="h6" className={classes.AppBar.title}>
-                                    Все контакты
-                                </Typography>
-                                <IconButton edge="start" className={classes.AppBar.menuButton} color="inherit" aria-label="menu">
-                                    <MenuIcon />
-                                </IconButton>
-                            </Grid>
-                        </Toolbar>
-                    </AppBar>
-                </div>
+            <Grid container spacing={1} direction='row' wrap='nowrap' alignItems="stretch" justify="center" component={'div'} style={{ height: '100vh', paddingLeft:10}}>
+                <Route render = {(props) => <LeftBar {...props} addNewCard={this.addNewCard}/>}/>
+                <Route exact path="/" render = {(props) => <AllContacts {...props} ifChange = {this.ifChange} change = {false}/> }/>
+                <Route  path="/addCard" render = {(props)=> <AddNewContact {...props} change = {false} /> }/>
+                <Route
+                    path="/changeCard" render = {(props) => <AddNewContact {...props} change = {true} idChangeCard={this.state.idChangeCard} />}
+                />
             </Grid>
         )
     }

@@ -10,34 +10,33 @@ import Input from "@material-ui/core/Input";
 import FormControl from "@material-ui/core/FormControl";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
-import axios from "axios";
-import uuid from 'uuid';
+//import uuid from 'uuid';
 
-const classes = {
-    AppBar:{
-        root:{
-            flexGrow: 1,
-        },
-        menuButton: {
-            marginRight:2,
-        },
-        title: {
-            flexGrow: 1,
-        },
-    },
-
-    formControl: {
-    },
-    textField:{
-
-    },
-    avatar: {
-        margin: 20,
-        width: 60,
-        height: 60,
-    },
-
-}
+// const classes = {
+//     AppBar:{
+//         root:{
+//             flexGrow: 1,
+//         },
+//         menuButton: {
+//             marginRight:2,
+//         },
+//         title: {
+//             flexGrow: 1,
+//         },
+//     },
+//
+//     formControl: {
+//     },
+//     textField:{
+//
+//     },
+//     avatar: {
+//         margin: 20,
+//         width: 60,
+//         height: 60,
+//     },
+//
+// }
 
 
 class AddNewContact extends Component{
@@ -55,8 +54,36 @@ class AddNewContact extends Component{
             instagram: '',
             facebook: '',
             image:'',
+            dataCard:[],
         }
     }
+
+    componentDidMount() {
+        let change = this.props.change;
+       let dataChangeCard =  change && this.props.idChangeCard ? fetch(`http://phonebook.hillel.it/api/phonebook/${this.props.idChangeCard}`,{
+           credentials: 'include'
+       }).then(response=>{
+            response.json().then(response=>{
+                this.setState({
+                    dataCard: response
+                }, ()=>{console.log('sfkljhwefhbwfijn',this.props.idChangeCard); this.updateState()})
+            })
+        }).catch((e)=>{
+            console.log(e);
+            this.props.history.push("/login")
+        })
+           : null
+    }
+
+    updateState = () =>{
+        this.setState({
+            name:this.state.dataCard.name,
+            surname:this.state.dataCard.surname,
+            email:this.state.dataCard.email,
+            phone: this.state.dataCard.phone.length !== 0 ? this.state.dataCard.phone[0]['value'] : 'none',
+        }, ()=> console.log('phone',this.state.dataCard))
+    }
+
 
     handleChange = event => {
         this.setState({
@@ -65,8 +92,9 @@ class AddNewContact extends Component{
     };
 
     cancelAddCard = (e) =>{
-        e.preventDefault()
+        e.preventDefault();
         this.props.history.push("/");
+        console.log('addnew',this.props.idChangeCard, this.props.change)
 
     };
 
@@ -121,24 +149,24 @@ class AddNewContact extends Component{
     //     ;
     // };
 
-    getCookie = (name)=> {
-        let nameEQ = name + "=";
-        let ca = document.cookie.split(';');
-        for (let i = 0; i < ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-            if (c.indexOf(nameEQ) == 0) return console.log (c.substring(nameEQ.length, c.length));
-            c.substring(nameEQ.length, c.length);
-
-        }
-
-        return null;
-    };
+    // getCookie = (name)=> {
+    //     let nameEQ = name + "=";
+    //     let ca = document.cookie.split(';');
+    //     for (let i = 0; i < ca.length; i++) {
+    //         let c = ca[i];
+    //         while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+    //         if (c.indexOf(nameEQ) === 0) return console.log (c.substring(nameEQ.length, c.length));
+    //         c.substring(nameEQ.length, c.length);
+    //
+    //     }
+    //
+    //     return null;
+    // };
 
 
     handleSubmitSave = (e) =>{
         e.preventDefault();
-        let id = uuid();
+        // let id = uuid();
         const data = {
                     //email: [this.state.email],
                     //phone: [
@@ -150,27 +178,27 @@ class AddNewContact extends Component{
                     // ],
                     // bornDate: this.state.birthday,
                     // category: id,
-                    name: this.state.name,
-                    surname: this.state.surname,
+                    //name: this.state.name,
+                    //surname: this.state.surname,
                     // information: this.state.information,
                     // position: this.state.description,
                     // instagram: this.state.instagram,
                     // facebook: this.state.facebook,
-                    // image: this.state.image,
+                     image: this.state.image,
                 };
-        let request = fetch('http://phonebook.hillel.it/api/phonebook',{
+        let request = fetch('http://phonebook.hillel.it/api/phonebook/5db895f2204dbd15b86e58b4',{
                 credentials: 'include',
-                method:'POST',
-                // headers:{
-                //     'Content-Type': "application/json",
-                // },
+                method:'PUT',
+                headers:{
+                    'Content-Type': "multipart/form-data",
+                },
                 body: JSON.stringify({"name":"andru", "surname":"nemodruk"}),
             }
 
         );
         request.then((response)=>{
             response.json().then((result) =>{
-            console.log(result.message, JSON.stringify(data));
+            console.log(result.message, JSON.stringify(data), this.state);
             })
         }).catch((e)=>{
             console.log(e)
@@ -184,17 +212,17 @@ class AddNewContact extends Component{
                 <AppBar position="static">
                     <Toolbar>
                         <Grid container component={'div'} direction='row' justify='space-between' alignItems='center' >
-                            <Typography variant="h6" className={classes.AppBar.title}>
-                                Добавить новый контакт
+                            <Typography variant="h6">
+                                {this.props.change ? 'Изменить контакт' : 'Добавить новый контакт'}
                             </Typography>
-                            <IconButton edge="start" className={classes.AppBar.menuButton} color="inherit" aria-label="menu">
-                                <MenuIcon />
-                            </IconButton>
+                            {/*<IconButton edge="start" color="inherit" aria-label="menu">*/}
+                            {/*    <MenuIcon />*/}
+                            {/*</IconButton>*/}
                         </Grid>
                     </Toolbar>
                 </AppBar>
                 <Grid container component={'form'} spacing={3} style={{padding: '10px', marginTop: '10px'}} onSubmit={this.handleSubmitSave}>
-                    <Grid item xs={2} component={'div'} justify='center'>
+                    <Grid item xs={2} component={'div'}>
                             <InputLabel htmlFor="ava">
                                 <Grid container justify="center" alignItems="center" component={'div'}>
                                     <Avatar alt="Remy Sharp" src="https://socialniesety.ru/files/images/components/articles_journal/originals/instagram/234/avatarka_dlya_instagram_primery_15.jpg" style={{cursor: 'pointer',height:'60px', width:'60px'}}/>
@@ -202,21 +230,21 @@ class AddNewContact extends Component{
                             </InputLabel>
                             <Input id="ava" value={this.state.image} onChange={this.handleChange} name='image' type='file' style={{display:'none'}}/>
                     </Grid>
-                    <Grid container spacing={3} component={'div'} xs={10}>
-                        <Grid item xs={6} component={'div'}>
-                            <FormControl component={'div'} className={classes.formControl} style={{ width: '100%'}}>
+                    <Grid item component={'div'} xs={10}>
+                        <Grid item xs={12} component={'div'}>
+                            <FormControl component={'div'} style={{ width: '100%'}}>
                                 <InputLabel htmlFor="component-simple">Имя</InputLabel>
                                 <Input id="component-simple" value={this.state.name} onChange={this.handleChange} name='name'/>
                             </FormControl>
                         </Grid>
-                        <Grid item xs={6} component={'div'}>
-                            <FormControl component={'div'} className={classes.formControl} style={{ width: '100%'}}>
+                        <Grid item xs={12} component={'div'}>
+                            <FormControl component={'div'} style={{ width: '100%'}}>
                                 <InputLabel htmlFor="component-simple">Фамилия</InputLabel>
                                 <Input id="component-simple" value={this.state.surname} onChange={this.handleChange} name='surname'/>
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} component={'div'}>
-                            <FormControl component={'div'} className={classes.formControl} style={{ width: '100%'}}>
+                            <FormControl component={'div'} style={{ width: '100%'}}>
                                 <InputLabel htmlFor="component-simple">Описание</InputLabel>
                                 <Input id="component-simple" value={this.state.description} onChange={this.handleChange} type='text' multiline name='description'/>
                             </FormControl>
@@ -225,47 +253,47 @@ class AddNewContact extends Component{
                 </Grid>
                 <Grid container component={'div'} spacing={3} style={{padding: '20px'}}>
                     <Grid item xs={12} component={'div'}>
-                        <FormControl component={'div'} className={classes.formControl} style={{ width: '100%'}}>
+                        <FormControl component={'div'} style={{ width: '100%'}}>
                             <InputLabel htmlFor="component-simple">Телефон</InputLabel>
                             <Input id="component-simple" value={this.state.phone} onChange={this.handleChange} name='phone'/>
                         </FormControl>
                     </Grid>
                     <Grid item xs={6} component={'div'}>
-                        <FormControl component={'div'} className={classes.formControl} style={{ width: '100%'}}>
+                        <FormControl component={'div'} style={{ width: '100%'}}>
                             <InputLabel htmlFor="component-simple">Почтовый ящик</InputLabel>
                             <Input id="component-simple" value={this.state.email} onChange={this.handleChange} name='email'/>
                         </FormControl>
                     </Grid>
                     <Grid item xs={6} component={'div'}>
-                        <FormControl component={'div'} className={classes.formControl} style={{ width: '100%'}}>
+                        <FormControl component={'div'} style={{ width: '100%'}}>
                             <InputLabel htmlFor="component-simple">День рождения</InputLabel>
                             <Input id="component-simple" value={this.state.birthday} onChange={this.handleChange} name='birthday'/>
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} component={'div'}>
-                        <FormControl component={'div'} className={classes.formControl} style={{ width: '100%'}}>
+                        <FormControl component={'div'} style={{ width: '100%'}}>
                             <InputLabel htmlFor="component-simple">Информация</InputLabel>
                             <Input id="component-simple" value={this.state.information} onChange={this.handleChange} type='text' multiline name='information'/>
                         </FormControl>
                     </Grid>
                     <Grid item xs={6} component={'div'}>
-                        <FormControl component={'div'} className={classes.formControl} style={{ width: '100%'}}>
+                        <FormControl component={'div'} style={{ width: '100%'}}>
                             <InputLabel htmlFor="component-simple">Instagram</InputLabel>
                             <Input id="component-simple" value={this.state.instagram} onChange={this.handleChange} name='instagram'/>
                         </FormControl>
                     </Grid>
                     <Grid item xs={6} component={'div'}>
-                        <FormControl component={'div'} className={classes.formControl} style={{ width: '100%'}}>
+                        <FormControl component={'div'} style={{ width: '100%'}}>
                             <InputLabel htmlFor="component-simple">Facebook</InputLabel>
                             <Input id="component-simple" value={this.state.facebook} onChange={this.handleChange} name='facebook'/>
                         </FormControl>
                     </Grid>
-                    <Grid container xs={12} component={'div'} direction='row' justify='flex-end' style={{marginTop: '20px'}}>
+                    <Grid container component={'div'} direction='row' justify='flex-end' style={{marginTop: '20px'}}>
                         <Button variant="contained" color="primary" style={{margin: '10px'}} onClick={this.cancelAddCard}>
                             Отменить
                         </Button>
                         <Button variant="contained" color="primary" type={onsubmit} style={{margin: '10px'}} onClick={this.handleSubmitSave}>
-                            Сохранить
+                            {this.props.change ? 'Сохранить' : 'Добавить'}
                         </Button>
                     </Grid>
                 </Grid>

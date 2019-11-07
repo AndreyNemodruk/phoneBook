@@ -64,29 +64,7 @@ class LoginPage extends Component{
         ;
     };
 
-    // handleSubmitLogin = event => {
-    //     event.preventDefault();
-    //     const data = {
-    //         email: this.state.email,
-    //         password: this.state.password,
-    //     };
-    //     axios.post('http://phonebook.hillel.it/api/users/login', data, {
-    //         headers: {
-    //             "Content-Type": "application/json"
-    //         }
-    //     })
-    //         .then(response => {
-    //             if(response.status === 200){
-    //                 console.log('response', response);
-    //                 this.setCookie(response.data.cookie.name, response.data.cookie.value, 1)
-    //                 this.props.history.push("/");
-    //             }else{
-    //                 console.log('Error' , response)
-    //             }
-    //         })
-    // };
-
-    setCookie = (name,value,days)=>{
+    setCookie = (name,value,days) =>{
         let expires = "";
         if (days) {
             const date = new Date();
@@ -96,13 +74,13 @@ class LoginPage extends Component{
         document.cookie = name + "=" + (value || "")  + expires + "; path=/";
     };
 
-    handleSubmitLogin = (e) =>{
+    handleSubmitLogin = (e)=>{
         e.preventDefault();
         const data = {
             email: this.state.email,
             password: this.state.password,
         };
-       let request = fetch('http://phonebook.hillel.it/api/users/login',{
+        let request = fetch('http://phonebook.hillel.it/api/users/login',{
                 method:'POST',
                 headers:{
                     "Content-Type": 'application/json;charset=utf-8',
@@ -114,18 +92,51 @@ class LoginPage extends Component{
         request.then((response)=>{response.json().then((result) =>{
             console.log(result.cookie);
             if(result.message === 'Log in successful'){
-                this.setCookie(result.cookie.name + 1, result.cookie.value, 1)
-                this.props.history.push("/");
-            }else{console.log(result)}
-             })
+                this.setCookie(result.cookie.name + 1, result.cookie.value, 0.15);
+                this.props.history.push("/")
+            }else{console.log(response)}
+        })
         }).catch((e)=>{
             console.log(e)
         });
     };
 
-    isLoggedIn = ()=>{
-        this.props.login(this.state.isLogin)
-    }
+    // setCookie = (name,value,days)=>{
+    //     let expires = "";
+    //     if (days) {
+    //         const date = new Date();
+    //         date.setTime(date.getTime() + (days*24*60*60*1000));
+    //         expires = "; expires=" + date.toUTCString();
+    //     }
+    //     document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+    // };
+
+    // handleSubmitLogin = (e) =>{
+    //     e.preventDefault();
+    //     const data = {
+    //         email: this.state.email,
+    //         password: this.state.password,
+    //     };
+    //    let request = fetch('http://phonebook.hillel.it/api/users/login',{
+    //             method:'POST',
+    //             headers:{
+    //                 "Content-Type": 'application/json;charset=utf-8',
+    //             },
+    //             body: JSON.stringify(data),
+    //             credentials: 'include'
+    //         }
+    //     );
+    //     request.then((response)=>{response.json().then((result) =>{
+    //         console.log(result.cookie);
+    //         if(result.message === 'Log in successful'){
+    //             this.setCookie(result.cookie.name + 1, result.cookie.value, 1)
+    //             this.props.history.push("/");
+    //         }else{console.log(result)}
+    //          })
+    //     }).catch((e)=>{
+    //         console.log(e)
+    //     });
+    // };
 
 
     // createLogin = ()=>{
@@ -332,5 +343,4 @@ class LoginPage extends Component{
     }
 }
 
-//export default withRouter (LoginPage);
 export default LoginPage;
