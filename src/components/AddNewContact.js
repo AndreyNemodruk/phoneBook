@@ -208,7 +208,7 @@ class AddNewContact extends Component{
 
     render() {
         return(
-            <Grid item xs={9} component={'div'}>
+            <Grid item xs={12} component={'div'}>
                 <AppBar position="static">
                     <Toolbar>
                         <Grid container component={'div'} direction='row' justify='space-between' alignItems='center' >

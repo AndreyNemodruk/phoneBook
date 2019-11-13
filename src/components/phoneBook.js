@@ -4,7 +4,7 @@ import LeftBar from "./leftBar";
 import AddNewContact from "./AddNewContact";
 import AllContacts from "./AllContacts";
 import {Route} from "react-router-dom";
-
+import styled from 'styled-components';
 
 // const classes = {
 //     AppBar:{
@@ -27,18 +27,23 @@ import {Route} from "react-router-dom";
 //
 // }
 
+const GridWrap = styled.div`{
+    display: grid
+    grid-template-areas:
+    "sidebar main"
+    "sidebar main";
+    grid-template-rows: 73px 1fr ;
+    grid-template-columns: 332px 1fr;
+    grid-gap: 0;
+}`;
 class PhoneBook extends Component{
     constructor(){
         super();
         this.state={
             contacts:[],
-            options: [
-                'None',
-                'Atria',
-                'Callisto',
-                'Dione',
-            ],
             idChangeCard: "",
+            categories:[],
+
         }
     }
 
@@ -65,20 +70,26 @@ class PhoneBook extends Component{
         this.setState({
             idChangeCard:id,
         },()=>console.log('phone',this.state))
+    };
+
+    getAllCategories = (categories) =>{
+        this.setState({categories: categories})
     }
 
 
 
     render() {
         return(
-            <Grid container spacing={1} direction='row' wrap='nowrap' alignItems="stretch" justify="center" component={'div'} style={{ height: '100vh', paddingLeft:10}}>
-                <Route render = {(props) => <LeftBar {...props} addNewCard={this.addNewCard}/>}/>
-                <Route exact path="/" render = {(props) => <AllContacts {...props} ifChange = {this.ifChange} change = {false}/> }/>
+            <GridWrap>
+            {/*<Grid container spacing={1} direction='row' wrap='nowrap' alignItems="stretch" justify="center" component={'div'} style={{ height: '100vh', paddingLeft:10}}>*/}
+                <Route render = {(props) => <LeftBar {...props} addNewCard={this.addNewCard} getAllCategories = {this.getAllCategories}/>}/>
+                <Route exact path="/" render = {(props) => <AllContacts {...props} ifChange = {this.ifChange} change = {false} allCategories={this.state.categories}/> }/>
                 <Route  path="/addCard" render = {(props)=> <AddNewContact {...props} change = {false} /> }/>
                 <Route
                     path="/changeCard" render = {(props) => <AddNewContact {...props} change = {true} idChangeCard={this.state.idChangeCard} />}
                 />
-            </Grid>
+            {/*</Grid>*/}
+            </GridWrap>
         )
     }
 }

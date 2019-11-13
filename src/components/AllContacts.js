@@ -6,6 +6,11 @@ import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/core/SvgIcon/SvgIcon";
 import Contact from "./Contact";
+import styled from 'styled-components';
+
+const Main = styled.div`{
+    grid-area: main;
+}`
 
 class AllContacts extends Component{
     constructor(){
@@ -37,14 +42,13 @@ class AllContacts extends Component{
         console.log('ALL',this.state, id)
     };
 
-
-
     render() {
         return(
-            <Grid item xs={9} component={'div'}>
+            <Main>
+            {/*<Grid item xs={9} component={'div'}>*/}
                 <AppBar position="static">
                     <Toolbar>
-                        <Grid container component={'div'} direction='row' justify='space-between' alignItems='center' >
+                        <Grid container component={'div'} direction='row' justify='space-around' alignItems='center' >
                             <Typography variant="h6">
                                 Все контакты
                             </Typography>
@@ -54,7 +58,7 @@ class AllContacts extends Component{
                         </Grid>
                     </Toolbar>
                 </AppBar>
-                <Grid component={'div'} container>
+                <Grid component={'div'} container style={{marginTop:32}}>
                     {this.state.contacts.map(contact =>    (
                         <Contact
                             key={contact._id}
@@ -64,11 +68,13 @@ class AllContacts extends Component{
                             //phone = {contact.phone[1]['value'] ? contact.phone[0]['value'] : 'none'}
                             id = {contact._id}
                             changedCard={this.changedCard}
+                            categories = {this.props.allCategories}
                         >
                         </Contact>
                     ))}
                 </Grid>
-            </Grid>
+            {/*</Grid>*/}
+            </Main>
         )
     }
 }
