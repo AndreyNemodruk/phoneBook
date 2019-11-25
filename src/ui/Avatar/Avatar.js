@@ -11,14 +11,13 @@ const Avatar = styled.div`{
 }`;
 
 const UserAvatar = ({
-                    sizing,
-                    ...rest
-                }) => (
-    <Avatar
-        sizing={sizing}
-        {...rest}
-    >
-    </Avatar>
+  sizing,
+  ...rest
+}) => (
+  <Avatar
+    sizing={sizing}
+    {...rest}
+  />
 );
 
 

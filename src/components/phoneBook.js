@@ -1,31 +1,11 @@
-import React, {Component} from "react";
-import Grid from "@material-ui/core/Grid";
-import LeftBar from "./leftBar";
-import AddNewContact from "./AddNewContact";
-import AllContacts from "./AllContacts";
-import {Route} from "react-router-dom";
+import React, { Component } from 'react';
+import { Route } from 'react-router-dom';
 import styled from 'styled-components';
+import LeftBar from './leftBar';
+import AddNewContact from './AddNewContact';
+import AllContacts from './AllContacts';
+import { getAllCategories } from '../requests';
 
-// const classes = {
-//     AppBar:{
-//         root:{
-//             flexGrow: 1,
-//         },
-//         menuButton: {
-//             marginRight:2,
-//         },
-//         title: {
-//             flexGrow: 1,
-//         },
-//     },
-//     fab: {
-//         margin: 1,
-//     },
-//     text:{
-//         color: 'primary',
-//     },
-//
-// }
 
 const GridWrap = styled.div`{
     display: grid
@@ -35,62 +15,75 @@ const GridWrap = styled.div`{
     grid-template-rows: 73px 1fr ;
     grid-template-columns: 332px 1fr;
     grid-gap: 0;
+    margin: 0 auto;
+    max-width: 1700px;
+    padding-right: 40 px;
 }`;
-class PhoneBook extends Component{
-    constructor(){
-        super();
-        this.state={
-            contacts:[],
-            idChangeCard: "",
-            categories:[],
 
-        }
-    }
+class PhoneBook extends Component {
+  constructor() {
+    super();
+    this.state = {
+      contacts: [],
+      idChangeCard: '',
+      categories: [],
+    };
+  }
 
-    // componentDidMount() {
-    //     let ContactDataPromise=fetch('http://phonebook.hillel.it/api/phonebook?',{
-    //         credentials: 'include'
-    //     });
-    //     ContactDataPromise.then(response=>{
-    //         response.json().then(response=>{
-    //             this.setState({
-    //                 contacts:response,
-    //             }, ()=> console.log(this.state))
-    //         })
-    //     })
-    // }
+  componentDidMount() {
+    getAllCategories().then((response) => response.json().then((result) => {
+      result.unshift({ _id: 'allCategories', name: 'All Contacts' });
+      this.setState({
+        categories: result,
+      });
+    })).catch((e) => alert(e));
+  }
 
-    addNewCard = (e)=>{
-        e.preventDefault()
-        this.props.history.push("/addCard");
+    addNewCard = (e) => {
+      const { history } = this.props;
+      e.preventDefault();
+      history.push('/addCard');
     };
 
-    ifChange = (id) =>{
-        this.props.history.push("/changeCard");
-        this.setState({
-            idChangeCard:id,
-        },()=>console.log('phone',this.state))
+    ifChange = (id) => {
+      const { history } = this.props;
+      history.push('/changeCard');
+      this.setState({
+        idChangeCard: id,
+      }, () => console.log('phone', this.state));
     };
 
-    getAllCategories = (categories) =>{
-        this.setState({categories: categories})
-    }
-
-
+    getAllCategories = (categories) => {
+      this.setState({ categories });
+    };
 
     render() {
-        return(
-            <GridWrap>
-            {/*<Grid container spacing={1} direction='row' wrap='nowrap' alignItems="stretch" justify="center" component={'div'} style={{ height: '100vh', paddingLeft:10}}>*/}
-                <Route render = {(props) => <LeftBar {...props} addNewCard={this.addNewCard} getAllCategories = {this.getAllCategories}/>}/>
-                <Route exact path="/" render = {(props) => <AllContacts {...props} ifChange = {this.ifChange} change = {false} allCategories={this.state.categories}/> }/>
-                <Route  path="/addCard" render = {(props)=> <AddNewContact {...props} change = {false} /> }/>
-                <Route
-                    path="/changeCard" render = {(props) => <AddNewContact {...props} change = {true} idChangeCard={this.state.idChangeCard} />}
-                />
-            {/*</Grid>*/}
-            </GridWrap>
-        )
+      const { idChangeCard, categories } = this.state;
+      return (
+        <GridWrap>
+          <Route render={(props) => (
+            <LeftBar
+              {...props}
+              addNewCard={this.addNewCard}
+              getAllCategories={this.getAllCategories}
+              categories={categories}
+            />
+          )}
+          />
+          <Route exact path="/" render={(props) => <AllContacts {...props} ifChange={this.ifChange} change={false} categories={this.state.categories} />} />
+          <Route path="/addCard" render={(props) => <AddNewContact {...props} change={false} />} />
+          <Route
+            path="/changeCard"
+            render={(props) => (
+              <AddNewContact
+                {...props}
+                change
+                idChangeCard={idChangeCard}
+              />
+            )}
+          />
+        </GridWrap>
+      );
     }
 }
 
